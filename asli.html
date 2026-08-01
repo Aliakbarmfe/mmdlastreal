@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مجتمع روبیکا - محصولات و پشتیبانی</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            color: #000000;
+        }
+
+        body {
+            min-height: 100vh;
+            background-color: #ffffff;
+            background-image: radial-gradient(circle at bottom left, rgba(0, 122, 255, 0.35) 0%, rgba(0, 122, 255, 0.1) 40%, rgba(255, 255, 255, 0) 70%);
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            padding-bottom: 80px;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 122, 255, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 2px solid #007aff;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+        }
+
+        .btn:active {
+            transform: scale(0.93);
+        }
+
+        .btn-logout {
+            border-color: #004085;
+            background: rgba(0, 64, 133, 0.2);
+            font-weight: 700;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        /* Products List */
+        .product-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .product-card {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 122, 255, 0.3);
+            border-radius: 16px;
+            padding: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 122, 255, 0.05);
+            transition: transform 0.15s ease;
+        }
+
+        .product-card:active {
+            transform: scale(0.97);
+        }
+
+        .product-name {
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+
+        .product-prices {
+            text-align: left;
+        }
+
+        .old-price {
+            text-decoration: line-through;
+            color: #777;
+            font-size: 0.85rem;
+            margin-bottom: 3px;
+        }
+
+        .offer-price {
+            color: #007aff;
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+
+        /* Floating Call Button */
+        .floating-call-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid #007aff;
+            box-shadow: 0 6px 20px rgba(0, 122, 255, 0.25);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: transform 0.15s ease;
+            z-index: 90;
+        }
+
+        .floating-call-btn:active {
+            transform: scale(0.9);
+        }
+
+        .floating-call-btn svg {
+            width: 26px;
+            height: 26px;
+            fill: #007aff;
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            width: 90%;
+            max-width: 380px;
+            max-height: 85vh;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid #007aff;
+            border-radius: 20px;
+            padding: 22px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: scale(0.85);
+            transition: transform 0.3s ease;
+            text-align: right;
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: scale(1);
+        }
+
+        .detail-row {
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .detail-row strong {
+            color: #007aff;
+        }
+
+        /* Chat Styling */
+        .chat-box {
+            height: 280px;
+            overflow-y: auto;
+            border: 1px solid #007aff;
+            border-radius: 12px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .chat-msg {
+            max-width: 80%;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            word-break: break-word;
+        }
+
+        .chat-msg.user {
+            align-self: flex-start;
+            background: #007aff;
+            color: #ffffff;
+        }
+
+        .chat-msg.admin {
+            align-self: flex-end;
+            background: #e5e5ea;
+            color: #000000;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #007aff;
+            border-radius: 10px;
+            outline: none;
+            font-size: 0.95rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px 10px;
+            color: #555;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <div class="top-bar">
+        <button class="btn btn-logout" onclick="handleLogout()">خروج</button>
+        <button class="btn" onclick="openChatModal()">ارتباط با پشتیبانی</button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h2 class="section-title">لیست محصولات مجتمع روبیکا</h2>
+        <div id="productList" class="product-list">
+            <div class="empty-state">در حال بارگذاری محصولات...</div>
+        </div>
+    </div>
+
+    <!-- Floating Call Icon -->
+    <div class="floating-call-btn" onclick="openCallModal()" title="تماس سریع">
+        <svg viewBox="0 0 24 24">
+            <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+        </svg>
+    </div>
+
+    <!-- Info / Alert Modal -->
+    <div class="modal-overlay" id="alertModal">
+        <div class="modal-box" style="text-align: center;">
+            <p id="alertModalText" style="margin-bottom: 20px; line-height: 1.6;"></p>
+            <button class="btn" onclick="closeModal('alertModal')">تایید</button>
+        </div>
+    </div>
+
+    <!-- Product Details Modal -->
+    <div class="modal-overlay" id="productModal">
+        <div class="modal-box">
+            <h3 id="pDetailName" style="text-align: center; margin-bottom: 15px; color: #007aff;"></h3>
+            <div class="detail-row"><strong>پلتفرم:</strong> <span id="pDetailPlatform"></span></div>
+            <div class="detail-row"><strong>تعداد ممبر/فالوور:</strong> <span id="pDetailMembers"></span></div>
+            <div class="detail-row"><strong>قیمت اصلی:</strong> <span id="pDetailOldPrice" style="text-decoration: line-through;"></span> تومان</div>
+            <div class="detail-row"><strong>قیمت آفر:</strong> <span id="pDetailOfferPrice" style="color: #007aff; font-weight: bold;"></span> تومان</div>
+            <div class="detail-row"><strong>توضیحات تکمیلی:</strong> <p id="pDetailDesc" style="margin-top: 5px; white-space: pre-line;"></p></div>
+            <br>
+            <button class="btn" style="width: 100%; margin-bottom: 8px;" onclick="openBuyModal()">خرید محصول</button>
+            <button class="btn btn-logout" style="width: 100%;" onclick="closeModal('productModal')">بستن</button>
+        </div>
+    </div>
+
+    <!-- Purchase Payment Modal -->
+    <div class="modal-overlay" id="buyModal">
+        <div class="modal-box">
+            <h3 style="text-align: center; margin-bottom: 15px; color: #007aff;">اطلاعات پرداخت</h3>
+            <div class="detail-row"><strong>شماره کارت:</strong> <span id="pCardNumber" style="font-family: monospace; font-size: 1.1rem; direction: ltr; display: inline-block;"></span></div>
+            <div class="detail-row"><strong>به نام:</strong> <span id="pCardName"></span></div>
+            <div class="detail-row"><strong>آیدی روبیکا مالک:</strong> <span id="pRubikaId" style="direction: ltr; display: inline-block;"></span></div>
+            <br>
+            <button class="btn btn-logout" style="width: 100%;" onclick="closeModal('buyModal')">بستن</button>
+        </div>
+    </div>
+
+    <!-- Support Chat Modal -->
+    <div class="modal-overlay" id="chatModal">
+        <div class="modal-box">
+            <h3 style="text-align: center; margin-bottom: 10px;">ارتباط با پشتیبانی <span id="adminNameHeader" style="font-size: 0.9rem; color: #007aff;"></span></h3>
+            <div class="chat-box" id="chatBox"></div>
+            <div class="chat-input-area">
+                <input type="text" id="chatMessageInput" class="chat-input" placeholder="پیام خود را بنویسید...">
+                <button class="btn" onclick="sendChatMessage()">ارسال</button>
+            </div>
+            <button class="btn btn-logout" style="width: 100%; margin-top: 10px;" onclick="closeModal('chatModal')">بستن چت</button>
+        </div>
+    </div>
+
+    <script>
+        // Security check & Back Button Lock
+        const currentUser = sessionStorage.getItem('currentUser');
+        if (!currentUser) {
+            window.location.href = 'index.html';
+        }
+
+        // Prevent back navigation
+        history.pushState(null, null, location.href);
+        window.onpopstate = function () {
+            history.go(1);
+        };
+
+        let selectedProduct = null;
+        let adminPhone = "در دسترس نیست";
+        let adminName = "مدیر";
+        let chatInterval = null;
+
+        // UI Helpers
+        window.showAlert = function(msg) {
+            document.getElementById('alertModalText').innerText = msg;
+            document.getElementById('alertModal').classList.add('active');
+        };
+
+        window.closeModal = function(id) {
+            document.getElementById(id).classList.remove('active');
+            if (id === 'chatModal' && chatInterval) {
+                clearInterval(chatInterval);
+                chatInterval = null;
+            }
+        };
+
+        // Welcome Modals handling after login/register
+        window.addEventListener('DOMContentLoaded', () => {
+            const justReg = sessionStorage.getItem('justRegistered');
+            const justLog = sessionStorage.getItem('justLoggedIn');
+
+            if (justReg === 'true') {
+                const pass = sessionStorage.getItem('currentPass');
+                showAlert(`ثبت نام با موفقیت انجام شد.\n\nنام کاربری: ${currentUser}\nرمز عبور: ${pass}`);
+                sessionStorage.removeItem('justRegistered');
+            } else if (justLog === 'true') {
+                showAlert('ورود موفقیت‌آمیز بود.');
+                sessionStorage.removeItem('justLoggedIn');
+            }
+
+            // دریافت اطلاعات اولیه و لیست محصولات در زمان لود صفحه
+            fetchAdminConfig();
+            fetchProducts();
+        });
+
+        // Logout
+        window.handleLogout = function() {
+            sessionStorage.clear();
+            document.body.style.transition = "opacity 0.4s ease";
+            document.body.style.opacity = "0";
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 400);
+        };
+
+        // Fetch Admin Config via Vercel Proxy
+        async function fetchAdminConfig() {
+            try {
+                const res = await fetch('/api/user-services?action=getAdminConfig');
+                const data = await res.json();
+                if (data.phone) adminPhone = data.phone;
+                if (data.name) adminName = data.name;
+                document.getElementById('adminNameHeader').innerText = `(${adminName})`;
+            } catch (e) {
+                console.error("Admin config fetch error:", e);
+            }
+        }
+
+        // Fetch Products via Vercel Proxy
+        async function fetchProducts() {
+            try {
+                const res = await fetch('/api/user-services?action=getProducts');
+                const products = await res.json();
+                const listEl = document.getElementById('productList');
+                listEl.innerHTML = '';
+
+                if (!products || Object.keys(products).length === 0) {
+                    listEl.innerHTML = '<div class="empty-state">هیچ محصولی ثبت نشده است.</div>';
+                    return;
+                }
+
+                Object.keys(products).forEach(key => {
+                    const prod = products[key];
+                    prod.id = key;
+
+                    const card = document.createElement('div');
+                    card.className = 'product-card';
+                    card.onclick = () => openProductDetails(prod);
+
+                    card.innerHTML = `
+                        <div class="product-name">${prod.name}</div>
+                        <div class="product-prices">
+                            <div class="old-price">${prod.oldPrice} تومان</div>
+                            <div class="offer-price">${prod.offerPrice} تومان</div>
+                        </div>
+                    `;
+                    listEl.appendChild(card);
+                });
+            } catch (e) {
+                console.error("Products fetch error:", e);
+                document.getElementById('productList').innerHTML = '<div class="empty-state">خطا در بارگذاری محصولات.</div>';
+            }
+        }
+
+        // Product Modal Logic
+        window.openProductDetails = function(prod) {
+            selectedProduct = prod;
+            document.getElementById('pDetailName').innerText = prod.name;
+            document.getElementById('pDetailPlatform').innerText = prod.platform;
+            document.getElementById('pDetailMembers').innerText = prod.members;
+            document.getElementById('pDetailOldPrice').innerText = prod.oldPrice;
+            document.getElementById('pDetailOfferPrice').innerText = prod.offerPrice;
+            document.getElementById('pDetailDesc').innerText = prod.desc || 'توضیحاتی ثبت نشده است.';
+
+            document.getElementById('productModal').classList.add('active');
+        };
+
+        window.openBuyModal = function() {
+            if (!selectedProduct) return;
+            document.getElementById('pCardNumber').innerText = selectedProduct.cardNumber || 'ثبت نشده';
+            document.getElementById('pCardName').innerText = selectedProduct.cardName || 'ثبت نشده';
+            document.getElementById('pRubikaId').innerText = selectedProduct.rubikaId || 'ثبت نشده';
+
+            closeModal('productModal');
+            document.getElementById('buyModal').classList.add('active');
+        };
+
+        // Floating Call Modal
+        window.openCallModal = function() {
+            showAlert(`سریع ترین راه ارتباط با مدیر این شماره تلفن هستش:\n\n${adminPhone}`);
+        };
+
+        // Chat Support Logic
+        window.openChatModal = function() {
+            document.getElementById('chatModal').classList.add('active');
+            loadChatMessages();
+            // Polling برای دریافت آنلاین پیام‌های چت
+            if (!chatInterval) {
+                chatInterval = setInterval(loadChatMessages, 3000);
+            }
+        };
+
+        async function loadChatMessages() {
+            try {
+                const res = await fetch(`/api/user-services?action=getChatMessages&username=${encodeURIComponent(currentUser)}`);
+                const messages = await res.json();
+                const chatBox = document.getElementById('chatBox');
+                chatBox.innerHTML = '';
+
+                if (!messages || Object.keys(messages).length === 0) {
+                    chatBox.innerHTML = '<div style="text-align:center; color:#777; font-size:0.85rem;">هنوز پیامی ارسال نکرده‌اید.</div>';
+                    return;
+                }
+
+                Object.keys(messages).forEach(key => {
+                    const msg = messages[key];
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = `chat-msg ${msg.sender === 'admin' ? 'admin' : 'user'}`;
+                    msgDiv.innerText = msg.text;
+                    chatBox.appendChild(msgDiv);
+                });
+
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } catch (e) {
+                console.error("Chat load error:", e);
+            }
+        }
+
+        window.sendChatMessage = async function() {
+            const input = document.getElementById('chatMessageInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            try {
+                await fetch('/api/user-services', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'sendChatMessage',
+                        username: currentUser,
+                        text: text
+                    })
+                });
+
+                input.value = '';
+                loadChatMessages();
+            } catch (e) {
+                console.error("Chat send error:", e);
+            }
+        };
+    </script>
+</body>
+  </html>
+  
